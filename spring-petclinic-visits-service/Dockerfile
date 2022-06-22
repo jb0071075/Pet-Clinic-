@@ -1,6 +1,10 @@
 FROM openjdk:11-jre
 ARG DOCKERIZE_VERSION=v0.6.1
+<<<<<<< HEAD
 ARG EXPOSED_PORT=7979
+=======
+ARG EXPOSED_PORT=8082
+>>>>>>> feature/msp-8
 ENV SPRING_PROFILES_ACTIVE docker,mysql
 ADD https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-alpine-linux-amd64-${DOCKERIZE_VERSION}.tar.gz dockerize.tar.gz
 RUN tar -xzf dockerize.tar.gz
