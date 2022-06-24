@@ -138,7 +138,7 @@ resource "aws_instance" "kube-master" {
     instance_type = "t2.medium"
     iam_instance_profile = module.iam.master_profile_name
     vpc_security_group_ids = [aws_security_group.matt-kube-master-sg.id, aws_security_group.matt-kube-mutual-sg.id]
-    key_name = "mattkey"
+    key_name = "ssh-key"
     subnet_id = "subnet-056b4201a735cec97"  # select own subnet_id of us-east-1a
     availability_zone = "us-east-1b"
     tags = {
@@ -156,7 +156,7 @@ resource "aws_instance" "worker-1" {
     instance_type = "t2.medium"
         iam_instance_profile = module.iam.worker_profile_name
     vpc_security_group_ids = [aws_security_group.matt-kube-worker-sg.id, aws_security_group.matt-kube-mutual-sg.id]
-    key_name = "mattkey"
+    key_name = "ssh-key"
     subnet_id = "subnet-056b4201a735cec97"
 "  # select own subnet_id of us-east-1b
     # subnet_id = "subnet-056b4201a735cec97"
@@ -176,7 +176,7 @@ resource "aws_instance" "worker-2" {
     instance_type = "t2.medium"
     iam_instance_profile = module.iam.worker_profile_name
     vpc_security_group_ids = [aws_security_group.matt-kube-worker-sg.id, aws_security_group.matt-kube-mutual-sg.id]
-    key_name = "mattkey"
+    key_name = "ssh-key"
     subnet_id = "subnet-056b4201a735cec97"  # select own subnet_id of us-east-1a
     # subnet_id = "subnet-3ccd235a"
     availability_zone = "us-east-1b"
