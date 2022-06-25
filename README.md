@@ -1425,8 +1425,7 @@ PATH="$PATH:/usr/local/bin"
 export ANSIBLE_PRIVATE_KEY_FILE="${WORKSPACE}/${ANS_KEYPAIR}"
 export ANSIBLE_HOST_KEY_CHECKING=False
 ansible -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml all -m ping
-Create a ClusterConfiguration file and save it as clusterconfig-base.yml under ansible/playbooks folder.
----
+Create a ClusterConfiguration file and save it as clusterconfig-base.yml under ---ansible/playbooks folder.
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
 kubernetesVersion: v1.23.5
