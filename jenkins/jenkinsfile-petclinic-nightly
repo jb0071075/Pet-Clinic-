@@ -97,21 +97,21 @@ pipeline {
         stage('Create Kubernetes Cluster for QA Automation Build') {
             steps {
                 echo "Setup Kubernetes cluster for ${APP_NAME} App"
-                sh "ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yml ./ansible/playbooks/k8s_setup.yml"
+                sh "ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml ./ansible/playbooks/k8s_setup.yaml"
             }
         }
 
         stage('Deploy App on Kubernetes cluster'){
             steps {
                 echo 'Deploying App on Kubernetes'
-                sh "envsubst < k8s/petclinic_chart/values-template.yml > k8s/petclinic_chart/values.yml"
-                sh "sed -i s/HELM_VERSION/${BUILD_NUMBER}/ k8s/petclinic_chart/Chart.yml"
+                sh "envsubst < k8s/petclinic_chart/values-template.yaml > k8s/petclinic_chart/values.yaml"
+                sh "sed -i s/HELM_VERSION/${BUILD_NUMBER}/ k8s/petclinic_chart/Chart.yaml"
                 sh "helm repo add stable-petclinic s3://petclinic-helm-charts-jelloul/stable/myapp/"
                 sh "helm package k8s/petclinic_chart"
-                sh "helm s3 push petclinic_chart-${BUILD_NUMBER}.tgz stable-petclinic"
-                sh "envsubst < ansible/playbooks/dev-petclinic-deploy-template > ansible/playbooks/dev-petclinic-deploy.yml"
+                sh "helm s3 push --force petclinic_chart-${BUILD_NUMBER}.tgz stable-petclinic"
+                sh "envsubst < ansible/playbooks/dev-petclinic-deploy-template > ansible/playbooks/dev-petclinic-deploy.yaml"
                 sh "sleep 60"    
-                sh "ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yml ./ansible/playbooks/dev-petclinic-deploy.yml"
+                sh "ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml ./ansible/playbooks/dev-petclinic-deploy.yaml"
             }
         }     
 
@@ -138,7 +138,7 @@ pipeline {
         stage('Run QA Automation Tests'){
             steps {
                 echo "Run the Selenium Functional Test on QA Environment"
-                sh 'ansible-playbook -vvv --connection=local --inventory 127.0.0.1, --extra-vars "workspace=${WORKSPACE} master_public_ip=${MASTER_PUBLIC_IP}" ./ansible/playbooks/pb_run_selenium_jobs.yml'
+                sh 'ansible-playbook -vvv --connection=local --inventory 127.0.0.1, --extra-vars "workspace=${WORKSPACE} master_public_ip=${MASTER_PUBLIC_IP}" ./ansible/playbooks/pb_run_selenium_jobs.yaml'
             }
         }
  }
@@ -164,4 +164,3 @@ pipeline {
             sh "rm -rf ${ANS_KEYPAIR}"
         }
     }
-}
