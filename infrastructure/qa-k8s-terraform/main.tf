@@ -16,7 +16,7 @@ resource "aws_security_group" "mattt-kube-worker-sg" {
     protocol = "tcp"
     from_port = 10250
     to_port = 10250
-    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
   }
   ingress {
     protocol = "tcp"
@@ -47,7 +47,7 @@ resource "aws_security_group" "mattt-kube-worker-sg" {
   }
   tags = {
     Name = "kube-worker-secgroup"
-    "kubernetes.io/cluster/mattsCluster" = "owned"
+    "kubernetes.io/cluster/matttsCluster" = "owned"
   }
 }
 
