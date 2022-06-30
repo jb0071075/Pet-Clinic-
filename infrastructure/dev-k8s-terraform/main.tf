@@ -162,7 +162,7 @@ resource "aws_instance" "worker-1" {
         Name = "worker-1"
         "kubernetes.io/cluster/matttsCluster" = "owned"
         Project = "tera-kube-ans"
-        Role = "worker"
+        Role = "worker-1"
         Id = "1"
         environment = "dev"
     }
@@ -180,7 +180,7 @@ resource "aws_instance" "worker-2" {
         Name = "worker-2"
         "kubernetes.io/cluster/matttsCluster" = "owned"
         Project = "tera-kube-ans"
-        Role = "worker"
+        Role = "worker-2"
         Id = "2"
         environment = "dev"
     }
