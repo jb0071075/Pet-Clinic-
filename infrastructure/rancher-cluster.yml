@@ -1,6 +1,11 @@
 nodes:
+<<<<<<< HEAD
   - address: 172.31.9.199
     internal_address: 172.31.9.199
+=======
+  - address: 172.31.12.125
+    internal_address: 172.31.12.125
+>>>>>>> 1b9d4ade3bd4c613fc87d9ceb8894bbe866f769e
     user: ubuntu
     role:
       - controlplane
