@@ -11,7 +11,7 @@ chmod 400 ${ANS_KEYPAIR}
 # Create infrastructure for kubernetes
 cd infrastructure/dev-k8s-terraform
 terraform init
-terraform apply -auto-approve
+terraform apply -auto-approve 
 # Install k8s cluster on the infrastructure
 ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml ./ansible/playbooks/k8s_setup.yaml
 # Build, Deploy, Test the application
