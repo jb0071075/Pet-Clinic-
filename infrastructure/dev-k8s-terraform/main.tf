@@ -1,19 +1,22 @@
 provider "aws" {
   region  = "us-east-1"
 }
+
 module "iam" {
   source = "./modules/IAM"
 }
-resource "aws_security_group" "mattt-kube-mutual-sg" {
-  name = "jkube-mutual-sec-group-for-mattt"
+
+resource "aws_security_group" "matt-kube-mutual-sg" {
+  name = "kube-mutual-sec-group-for-matt"
 }
-resource "aws_security_group" "mattt-kube-worker-sg" {
-  name = "jkube-worker-sec-group-for-mattt"
+
+resource "aws_security_group" "matt-kube-worker-sg" {
+  name = "kube-worker-sec-group-for-matt"
   ingress {
     protocol = "tcp"
     from_port = 10250
     to_port = 10250
-    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
   ingress {
     protocol = "tcp"
@@ -21,18 +24,21 @@ resource "aws_security_group" "mattt-kube-worker-sg" {
     to_port = 32767
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     protocol = "tcp"
     from_port = 22
     to_port = 22
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     protocol = "udp"
     from_port = 8472
     to_port = 8472
-    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
+  
   egress{
     protocol = "-1"
     from_port = 0
@@ -41,11 +47,13 @@ resource "aws_security_group" "mattt-kube-worker-sg" {
   }
   tags = {
     Name = "kube-worker-secgroup"
-    "kubernetes.io/cluster/matttsCluster" = "owned"
+    "kubernetes.io/cluster/mattsCluster" = "owned"
   }
 }
-resource "aws_security_group" "mattt-kube-master-sg" {
-  name = "jkube-master-sec-group-for-mattt"
+
+resource "aws_security_group" "matt-kube-master-sg" {
+  name = "kube-master-sec-group-for-matt"
+
   ingress {
     protocol = "tcp"
     from_port = 22
@@ -63,7 +71,7 @@ resource "aws_security_group" "mattt-kube-master-sg" {
     from_port = 6443
     to_port = 6443
     cidr_blocks = ["0.0.0.0/0"]
-    #security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    #security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
   ingress {
     protocol = "tcp"
@@ -75,31 +83,31 @@ resource "aws_security_group" "mattt-kube-master-sg" {
     protocol = "tcp"
     from_port = 2380
     to_port = 2380
-    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
   ingress {
     protocol = "tcp"
     from_port = 2379
     to_port = 2379
-    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
   ingress {
     protocol = "tcp"
     from_port = 10250
     to_port = 10250
-    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
   ingress {
     protocol = "tcp"
     from_port = 10251
     to_port = 10251
-    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
   ingress {
     protocol = "tcp"
     from_port = 10252
     to_port = 10252
-    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
   ingress {
     protocol = "tcp"
@@ -111,7 +119,7 @@ resource "aws_security_group" "mattt-kube-master-sg" {
     protocol = "udp"
     from_port = 8472
     to_port = 8472
-    security_groups = [aws_security_group.mattt-kube-mutual-sg.id]
+    security_groups = [aws_security_group.matt-kube-mutual-sg.id]
   }
   egress {
     protocol = "-1"
@@ -120,70 +128,79 @@ resource "aws_security_group" "mattt-kube-master-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "jkube-master-secgroup"
+    Name = "kube-master-secgroup"
+    # "kubernetes.io/cluster/mattsCluster" = "owned"  # This part is commented out for not letting master node to get into the target instances of the ingress load balancer
   }
 }
+
 resource "aws_instance" "kube-master" {
     ami = "ami-013f17f36f8b1fefb"
     instance_type = "t2.medium"
     iam_instance_profile = module.iam.master_profile_name
-    vpc_security_group_ids = [aws_security_group.mattt-kube-master-sg.id, aws_security_group.mattt-kube-mutual-sg.id]
+    vpc_security_group_ids = [aws_security_group.matt-kube-master-sg.id, aws_security_group.matt-kube-mutual-sg.id]
     key_name = "ssh-key"
     subnet_id = "subnet-0d77bc21e25fb29c4"  # select own subnet_id of us-east-1a
     availability_zone = "us-east-1a"
     tags = {
-        Name = "jkube-master"
-        "kubernetes.io/cluster/matttsCluster" = "owned"
+        Name = "kube-master"
+        "kubernetes.io/cluster/mattsCluster" = "owned"
         Project = "tera-kube-ans"
         Role = "master"
         Id = "1"
         environment = "dev"
     }
 }
+
 resource "aws_instance" "worker-1" {
     ami = "ami-013f17f36f8b1fefb"
     instance_type = "t2.medium"
         iam_instance_profile = module.iam.worker_profile_name
-    vpc_security_group_ids = [aws_security_group.mattt-kube-worker-sg.id, aws_security_group.mattt-kube-mutual-sg.id]
+    vpc_security_group_ids = [aws_security_group.matt-kube-worker-sg.id, aws_security_group.matt-kube-mutual-sg.id]
     key_name = "ssh-key"
     subnet_id = "subnet-0d77bc21e25fb29c4"  # select own subnet_id of us-east-1a
+    # subnet_id = "subnet-0d77bc21e25fb29c4"
     availability_zone = "us-east-1a"
     tags = {
-        Name = "jworker-1"
-        "kubernetes.io/cluster/matttsCluster" = "owned"
+        Name = "worker-1"
+        "kubernetes.io/cluster/mattsCluster" = "owned"
         Project = "tera-kube-ans"
         Role = "worker"
         Id = "1"
         environment = "dev"
     }
 }
+
 resource "aws_instance" "worker-2" {
     ami = "ami-013f17f36f8b1fefb"
     instance_type = "t2.medium"
     iam_instance_profile = module.iam.worker_profile_name
-    vpc_security_group_ids = [aws_security_group.mattt-kube-worker-sg.id, aws_security_group.mattt-kube-mutual-sg.id]
+    vpc_security_group_ids = [aws_security_group.matt-kube-worker-sg.id, aws_security_group.matt-kube-mutual-sg.id]
     key_name = "ssh-key"
     subnet_id = "subnet-0d77bc21e25fb29c4"  # select own subnet_id of us-east-1a
+    # subnet_id = "subnet-0d77bc21e25fb29c4"
     availability_zone = "us-east-1a"
     tags = {
-        Name = "jworker-2"
-        "kubernetes.io/cluster/matttsCluster" = "owned"
+        Name = "worker-2"
+        "kubernetes.io/cluster/mattsCluster" = "owned"
         Project = "tera-kube-ans"
         Role = "worker"
         Id = "2"
         environment = "dev"
     }
 }
+
 output kube-master-ip {
   value       = aws_instance.kube-master.public_ip
   sensitive   = false
   description = "public ip of the kube-master"
 }
+
 output worker-1-ip {
   value       = aws_instance.worker-1.public_ip
   sensitive   = false
   description = "public ip of the worker-1"
 }
+
 output worker-2-ip {
   value       = aws_instance.worker-2.public_ip
   sensitive   = false
