@@ -14,7 +14,7 @@ metadata:
   name: api-gateway
 spec:
   ingressClassName: nginx
-    rules:
+  rules:
     - host: '{{ .Values.DNS_NAME }}'
       http:
         paths:
